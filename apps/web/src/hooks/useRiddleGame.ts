@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 type RiddleGameState = {
-  riddle?: string;
+  // riddle?: string;
   contractAddress: string;
 } & (
   | { status: "waitingForRiddle" }
@@ -9,12 +9,20 @@ type RiddleGameState = {
   | { status: "solved"; riddle: string; winner: string; solution: string }
 );
 
-export function useRiddleGame() {
+export function useRiddleGame(): RiddleGameState & {
+  submissions: string[];
+  isSubmitted: (submission: string) => boolean;
+  submit: (submission: string) => void;
+} {
   const state: RiddleGameState = {
     contractAddress: "",
     riddle: "what is the name of the only son of Bob's father?",
-    status: "waitingForRiddle",
-  } as RiddleGameState;
+    // status: "waitingForRiddle",
+    status: "guess",
+    // status: "solved",
+    // winner: "test",
+    // solution: "bob",
+  };
 
   const [submittedSet, setSubmittedSet] = useState<Set<string>>(
     () => new Set([])
