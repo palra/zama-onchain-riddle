@@ -4,17 +4,17 @@ type RiddleGameState = {
   riddle?: string;
   contractAddress: string;
 } & (
-  | { status: 'waitingForRiddle' }
-  | { status: 'guess'; riddle: string }
-  | { status: 'solved'; riddle: string; winner: string; solution: string }
-)
+  | { status: "waitingForRiddle" }
+  | { status: "guess"; riddle: string }
+  | { status: "solved"; riddle: string; winner: string; solution: string }
+);
 
 export function useRiddleGame() {
   const state: RiddleGameState = {
-    contractAddress: '',
+    contractAddress: "",
     riddle: "what is the name of the only son of Bob's father?",
-    status: 'guess',
-  }
+    status: "waitingForRiddle",
+  } as RiddleGameState;
 
   const [submittedSet, setSubmittedSet] = useState<Set<string>>(
     () => new Set([])
@@ -31,10 +31,9 @@ export function useRiddleGame() {
   };
 
   return {
-    status: state.status,
-    riddle: state.riddle,
+    ...state,
     submissions: Array.from(submittedSet),
     submit,
     isSubmitted,
   };
-} 
+}

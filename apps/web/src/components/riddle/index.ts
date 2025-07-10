@@ -1,0 +1,1 @@
+export { Riddle } from "./riddle";
