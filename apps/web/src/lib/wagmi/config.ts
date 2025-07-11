@@ -1,18 +1,21 @@
-import { http, createConfig } from 'wagmi'
-import { hardhat, sepolia } from 'wagmi/chains'
+import { getDefaultConfig } from '@rainbow-me/rainbowkit'
+import { http } from 'wagmi'
+import { hardhat } from 'wagmi/chains'
 
-export const config = createConfig({
-  chains: [hardhat, sepolia],
+export const config = getDefaultConfig({
+  appName: "Zama on-chain riddle",
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'default',
+  chains: [hardhat],
   transports: {
     [hardhat.id]: http(),
-    [sepolia.id]: http(),
   },
 })
 
+// Utility function to get the target chain (first configured chain)
+export const getTargetChain = () => config.chains[0];
+
 declare module 'wagmi' {
   interface Register {
-    config
-    : typeof config
-
+    config: typeof config
   }
 }

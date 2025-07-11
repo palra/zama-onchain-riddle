@@ -2,6 +2,20 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Environment Variables
+
+Create a `.env.local` file in the `apps/web` directory with the following variables:
+
+```bash
+# WalletConnect Project ID (get one at https://cloud.walletconnect.com/)
+NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your-walletconnect-project-id
+
+# Chain configuration (currently set to hardhat, can be changed via environment)
+NEXT_PUBLIC_CHAIN_ID=31337
+```
+
+### Development
+
 First, run the development server:
 
 ```bash
@@ -15,6 +29,24 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Web3 Features
+
+This app includes:
+
+- **RainbowKit Integration**: Modern wallet connection UI
+- **Wallet Connection Required**: Users must connect their wallet to access the app
+- **Hardhat Network Support**: Currently configured for local development on Hardhat
+- **Chain Switching**: Automatic prompts to switch to the correct network
+- **Multiple Wallet Support**: MetaMask, WalletConnect, Coinbase Wallet, and injected wallets
+
+### Wallet Connection
+
+The app requires users to connect their wallet before accessing the riddle game. The connection screen includes:
+
+- Clear instructions to connect to the Hardhat network
+- Multiple wallet options via RainbowKit
+- Automatic network switching prompts
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
