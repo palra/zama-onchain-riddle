@@ -33,13 +33,13 @@ contract OnchainRiddle {
     function submitAnswer(string memory _answer) external {
         require(isActive, "No active riddle");
         require(winner == address(0), "Riddle already solved");
-        
+
         if (keccak256(abi.encodePacked(_answer)) == answerHash) {
             winner = msg.sender;
             isActive = false;
             emit Winner(msg.sender);
         }
-        
+
         emit AnswerAttempt(msg.sender, winner == msg.sender);
     }
 }

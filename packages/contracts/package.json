@@ -1,5 +1,5 @@
 {
-  "name": "@poppyseedDev/solidity-riddle",
+  "name": "@repo/contracts",
   "description": "",
   "version": "1.0.0",
   "author": {
@@ -12,6 +12,7 @@
     "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
     "@nomicfoundation/hardhat-verify": "^2.0.2",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.1.0",
@@ -26,10 +27,11 @@
     "dotenv": "^16.0.3",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
-    "ethers": "^6.9.0",
+    "ethers": "^6.15.0",
     "fs-extra": "^11.2.0",
     "hardhat": "^2.19.2",
     "hardhat-deploy": "^0.12.1",
+    "hardhat-deploy-ethers": "^0.4.2",
     "hardhat-gas-reporter": "^1.0.9",
     "lodash": "^4.17.21",
     "mocha": "^10.2.0",
@@ -63,6 +65,7 @@
   },
   "scripts": {
     "clean": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json && npm run typechain",
+    "postinstall": "npm run compile",
     "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"test/**/*.ts\" && npm run typechain",
     "deploy:contracts": "hardhat deploy",
@@ -75,9 +78,16 @@
     "task:deployLock": "hardhat task:deployLock",
     "task:withdraw": "hardhat task:withdraw",
     "test": "hardhat test",
-    "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain"
+    "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
+    "dev": "hardhat node"
   },
   "dependencies": {
     "@openzeppelin/merkle-tree": "^1.0.7"
+  },
+  "main": "src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
   }
 }
