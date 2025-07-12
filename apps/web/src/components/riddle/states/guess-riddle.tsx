@@ -117,3 +117,24 @@ export function GuessRiddle({
     </form>
   );
 }
+import { Skeleton } from "@/components/ui/skeleton";
+
+export function GuessRiddleLoading() {
+  return (
+    <div className="flex flex-col items-center gap-6 w-full max-w-md">
+      <div className="w-full">
+        <Skeleton className="h-8 w-3/4 mx-auto mb-4" />
+      </div>
+      <div className="flex w-full gap-2 justify-center flex-col items-center">
+        <div className="flex w-full gap-2 justify-center">
+          <Skeleton className="h-10 flex-1 min-w-0" />
+          <Skeleton className="h-10 w-20" />
+        </div>
+        <Skeleton className="h-4 w-1/2 mt-2" />
+      </div>
+      <div className="w-full mt-4 space-y-2">
+        <Skeleton className="h-6 w-2/3 mx-auto" />
+      </div>
+    </div>
+  );
+}

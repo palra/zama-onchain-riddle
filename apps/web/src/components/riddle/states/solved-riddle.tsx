@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 interface SolvedRiddleProps {
   riddle: string;
   winner: string;
-  solution: string;
+  solution?: string;
 }
 
 export function SolvedRiddle({ riddle, winner, solution }: SolvedRiddleProps) {
@@ -24,7 +24,7 @@ export function SolvedRiddle({ riddle, winner, solution }: SolvedRiddleProps) {
           <div className="text-green-800 font-medium mb-2">🎉 Riddle Solved!</div>
           <div className="text-sm text-green-700">
             <div><strong>Winner:</strong> {winner}</div>
-            <div><strong>Solution:</strong> {solution}</div>
+            <div><strong>Solution:</strong> {solution ?? <i>unknown</i>}</div>
           </div>
         </div>
       </motion.div>
