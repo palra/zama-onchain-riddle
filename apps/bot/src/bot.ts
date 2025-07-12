@@ -1,9 +1,9 @@
+import { setTimeout } from "timers/promises";
+import { createWalletClient, encodePacked, keccak256 } from "viem";
 import { mnemonicToAccount } from "viem/accounts";
 import { OnchainRiddle } from "./contract";
 import { MNEMONIC } from "./env";
 import { clientConfig, publicClient } from "./viem";
-import { createWalletClient, keccak256, stringToBytes } from "viem";
-import { setTimeout } from "timers/promises";
 
 export const account = mnemonicToAccount(MNEMONIC);
 const walletClient = createWalletClient({
@@ -16,7 +16,7 @@ export async function submitRiddle({ question, answer }: { question: string, ans
     console.log('📝 Submitting new riddle...');
     console.log('   Riddle:', question);
     console.log('   Answer:', answer);
-    const answerHash = keccak256(stringToBytes(answer));
+    const answerHash = keccak256(encodePacked(['string'], [answer]));
     console.log('   Answer hash:', answerHash);
 
     const txHash = await walletClient.writeContract({

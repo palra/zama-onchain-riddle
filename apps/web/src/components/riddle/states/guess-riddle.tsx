@@ -1,25 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useSubmitAnswer } from "@/hooks/useSubmitAnswer";
+import { isSubmittedAtom, submissionsSizeAtom } from "@/lib/atoms/submissions";
 import { cn } from "@/lib/utils";
 import { useForm } from "@tanstack/react-form";
 import { animate } from "framer-motion";
+import { useAtom } from "jotai";
 import { useEffect, useRef } from "react";
 import { custom, minLength, pipe, strictObject, string, trim } from "valibot";
 import { RiddleSubmissions } from "../riddle-submissions";
 
 interface GuessRiddleProps {
   riddle: string;
-  submissions: string[];
-  submit: (answer: string) => void;
-  isSubmitted: (answer: string) => boolean;
 }
 
-export function GuessRiddle({
-  riddle,
-  submissions,
-  submit,
-  isSubmitted,
-}: GuessRiddleProps) {
+export function GuessRiddle({ riddle }: GuessRiddleProps) {
+  const [submissionsSize] = useAtom(submissionsSizeAtom);
+  const [isSubmitted] = useAtom(isSubmittedAtom);
+  const { submit } = useSubmitAnswer();
+
   // Define the schema with valibot
   const answerSchema = strictObject({
     answer: pipe(
@@ -39,7 +39,7 @@ export function GuessRiddle({
       onChange: answerSchema,
     },
     onSubmit: async ({ value }) => {
-      submit(value.answer.trim());
+      await submit({ submission: value.answer.trim() });
       form.reset();
     },
   });
@@ -56,7 +56,7 @@ export function GuessRiddle({
         ref.scrollTop = latest;
       },
     });
-  }, [submissions.length]);
+  }, [submissionsSize]);
 
   return (
     <form
@@ -80,11 +80,12 @@ export function GuessRiddle({
                 className="flex-1"
                 placeholder="Enter your answer..."
                 autoFocus
+                disabled={form.state.isSubmitting}
               />
               <Button
                 type="submit"
                 className="px-6"
-                disabled={!form.state.isValid}
+                disabled={!form.state.isValid || form.state.isSubmitting}
               >
                 send
               </Button>
@@ -108,7 +109,6 @@ export function GuessRiddle({
         // eslint-disable-next-line react/no-children-prop
         children={(currentSubmission) => (
           <RiddleSubmissions
-            submissions={submissions}
             currentSubmission={currentSubmission}
             scrollRef={scrollRef}
           />
@@ -117,7 +117,6 @@ export function GuessRiddle({
     </form>
   );
 }
-import { Skeleton } from "@/components/ui/skeleton";
 
 export function GuessRiddleLoading() {
   return (

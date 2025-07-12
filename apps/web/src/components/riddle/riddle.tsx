@@ -1,12 +1,10 @@
 import { useRiddleState } from "@/hooks/useRiddleState";
-import { useSubmissions } from "@/hooks/useSubmissions";
 import { match } from "ts-pattern";
 import { GuessRiddle, GuessRiddleLoading } from "./states/guess-riddle";
 import { SolvedRiddle } from "./states/solved-riddle";
 import { WaitingRiddle } from "./states/waiting-riddle";
 
 export function Riddle() {
-  const { submit, isSubmitted, submissions } = useSubmissions();
   const gameState = useRiddleState();
 
   return match(gameState)
@@ -14,7 +12,7 @@ export function Riddle() {
       match(gameState)
         .with({ status: "waitingForRiddle" }, () => <WaitingRiddle />)
         .with({ status: "guess" }, ({ riddle }) => (
-          <GuessRiddle {...{ riddle, submissions, submit, isSubmitted }} />
+          <GuessRiddle {...{ riddle }} />
         ))
         .with({ status: "solved" }, ({ riddle, winner, solution }) => (
           <SolvedRiddle {...{ riddle, winner, solution }} />
