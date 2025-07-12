@@ -66,6 +66,7 @@
   "scripts": {
     "clean": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json && npm run typechain",
     "postinstall": "npm run compile",
+    "build": "npm run compile && tsc",
     "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"test/**/*.ts\" && npm run typechain",
     "deploy:contracts": "hardhat deploy",
@@ -84,10 +85,11 @@
   "dependencies": {
     "@openzeppelin/merkle-tree": "^1.0.7"
   },
-  "main": "src/index.ts",
+  "main": "types/index.js",
   "exports": {
     ".": {
-      "import": "./src/index.ts"
+      "types": "./types/index.ts",
+      "default": "./types/index.js"
     }
   }
 }
