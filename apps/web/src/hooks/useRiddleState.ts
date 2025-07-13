@@ -1,3 +1,4 @@
+import { pushEventAtom } from "@/lib/atoms/activity-feed";
 import { resetSubmissionsAtom, setSubmissionValidityByTxAtom } from "@/lib/atoms/submissions";
 import { OnchainRiddle } from "@/lib/contracts";
 import { RiddleGameState } from "@/lib/domain";
@@ -9,6 +10,8 @@ import { useReadContracts, useWatchContractEvent } from "wagmi";
 export function useRiddleState() {
   const [, resetSubmissions] = useAtom(resetSubmissionsAtom);
   const [, setSubmissionValidityByTx] = useAtom(setSubmissionValidityByTxAtom);
+
+  const [, pushEvent] = useAtom(pushEventAtom);
 
   const contractState = useReadContracts({
     allowFailure: false,
@@ -57,16 +60,20 @@ export function useRiddleState() {
 
         switch (log.eventName) {
           case 'RiddleSet':
+            pushEvent({ type: 'newRiddle', riddle: log.args.riddle! });
             resetSubmissions();
             break;
           case 'AnswerAttempt':
+            pushEvent({ type: 'guess', from: log.args.user!, isValid: log.args.correct! });
             if (typeof log.args.correct !== "undefined") {
               setSubmissionValidityByTx({
                 transactionHash: log.transactionHash,
                 isValid: log.args.correct
               })
             }
-
+            break;
+          case 'Winner':
+            pushEvent({ type: 'winner', winner: log.args.user! })
             break;
         }
 

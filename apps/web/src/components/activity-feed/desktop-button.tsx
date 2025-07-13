@@ -1,0 +1,41 @@
+import { Button } from "@/components/ui/button";
+import {
+  activityFeedCollapsedAtom,
+  unseenEventsAtom,
+} from "@/lib/atoms/activity-feed";
+import { useAtom } from "jotai";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { GreenPulse } from "./green-pulse";
+import { cn } from "@/lib/utils";
+
+export function DesktopButton() {
+  const [eventsNum] = useAtom(unseenEventsAtom);
+  const [isCollapsed, toggleCollapse] = useAtom(activityFeedCollapsedAtom);
+
+  return (
+    <Button
+      variant="outline"
+      onClick={() => toggleCollapse()}
+      className="rounded-s-lg rounded-e-none shadow-lg hover:shadow-xl transition-all duration-200 relative border-r-0"
+      title={isCollapsed ? "Show activity feed" : "Hide activity feed"}
+    >
+      <span
+        className={cn(
+          "transition-all duration-300 inline-flex flex-row gap-1 items-center",
+          isCollapsed
+            ? "opacity-100 max-w-xs ml-0"
+            : "opacity-0 max-w-0 ml-0 overflow-hidden -mx-1", // compensate gap
+        )}
+      >
+        <GreenPulse className="inline-block" />
+        Live Activity
+      </span>
+      {isCollapsed ? <ChevronLeft /> : <ChevronRight />}
+      {eventsNum > 0 && (
+        <span className="absolute -top-2 -left-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
+          {eventsNum > 9 ? "9+" : eventsNum}
+        </span>
+      )}
+    </Button>
+  );
+}

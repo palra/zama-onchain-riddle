@@ -1,3 +1,4 @@
+/* eslint-disable react/no-children-prop */
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -28,8 +29,8 @@ export function GuessRiddle({ riddle }: GuessRiddleProps) {
       minLength(1, "Please enter an answer."),
       custom(
         (val) => !isSubmitted(val + ""),
-        "This answer has already been submitted."
-      )
+        "This answer has already been submitted.",
+      ),
     ),
   });
 
@@ -66,7 +67,7 @@ export function GuessRiddle({ riddle }: GuessRiddleProps) {
       }}
       className="flex flex-col items-center gap-6 w-full max-w-md"
     >
-      <h1 className={cn("text-xl md:text-2xl font-semibold text-center mb-2")}>
+      <h1 className={cn("text-2xl font-semibold text-center mb-2")}>
         {riddle}
       </h1>
 
@@ -74,21 +75,28 @@ export function GuessRiddle({ riddle }: GuessRiddleProps) {
         {(field) => (
           <div className="flex w-full gap-2 justify-center flex-col items-center">
             <div className="flex w-full gap-2 justify-center">
-              <Input
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                className="flex-1"
-                placeholder="Enter your answer..."
-                autoFocus
-                disabled={form.state.isSubmitting}
+              <form.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+                children={([canSubmit, isSubmitting]) => (
+                  <div className="flex flex-col gap-2 sm:flex-row w-full">
+                    <Input
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      className="flex-1"
+                      placeholder="Enter your answer..."
+                      autoFocus
+                      disabled={isSubmitting}
+                    />
+                    <Button
+                      type="submit"
+                      className="px-6"
+                      disabled={!canSubmit || isSubmitting}
+                    >
+                      send
+                    </Button>
+                  </div>
+                )}
               />
-              <Button
-                type="submit"
-                className="px-6"
-                disabled={!form.state.isValid || form.state.isSubmitting}
-              >
-                send
-              </Button>
             </div>
             {field.state.meta.errors.length > 0 ? (
               <div className="text-red-500 text-xs mt-1 text-center w-full">
@@ -106,7 +114,6 @@ export function GuessRiddle({ riddle }: GuessRiddleProps) {
 
       <form.Subscribe
         selector={(state) => state.values.answer.trim()}
-        // eslint-disable-next-line react/no-children-prop
         children={(currentSubmission) => (
           <RiddleSubmissions
             currentSubmission={currentSubmission}

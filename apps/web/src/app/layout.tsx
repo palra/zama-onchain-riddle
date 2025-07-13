@@ -33,7 +33,7 @@ export default function RootLayout({
         <Providers>
           <AppWrapper>{children}</AppWrapper>
         </Providers>
-        <Toaster />
+        <Toaster closeButton />
       </body>
     </html>
   );

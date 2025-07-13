@@ -3,7 +3,9 @@ import { atom } from 'jotai';
 import { encodePacked, keccak256 } from 'viem';
 
 export const submissionsAtom = atom(new Map<string, Submission>());
-export const submissionsByTxHashAtom = atom(new Map<`0x${string}`, string>());
+
+// internal use only
+const submissionsByTxHashAtom = atom<Record<`0x${string}`, string>>({});
 
 export const addSubmissionAtom = atom(
   null,
@@ -23,29 +25,41 @@ export const addSubmissionAtom = atom(
   }
 );
 
-export const setSubmissionConfirmedAtom = atom(
+
+export const setSubmissionTxHashAtom = atom(
   null,
-  (get, set, { submission, transactionHash }: { submission: string; transactionHash: `0x${string}` }) => {
+  (get, set, { submission, transactionHash }: { transactionHash: `0x${string}`; submission: string }) => {
     const current = get(submissionsAtom);
-    if (!current.has(submission)) {
-      return;
-    }
+    if (!current.has(submission)) return;
 
     const updated = new Map(current);
-    const existing = updated.get(submission)!;
-    updated.set(submission, { ...existing, isPending: false, receipt: { transactionHash }});
-    
-    const txHashMap = get(submissionsByTxHashAtom);
-    set(submissionsByTxHashAtom, new Map(txHashMap).set(transactionHash, submission));
+    const existing = updated.get(submission);
+    if (!existing) return;
+    updated.set(submission, {
+      ...existing,
+      isPending: true,
+      receipt: {
+        ...existing.receipt,
+        transactionHash,
+      },
+    });
+
     set(submissionsAtom, updated);
+
+    const txHashObj = get(submissionsByTxHashAtom);
+    set(submissionsByTxHashAtom, {
+      ...txHashObj,
+      [transactionHash]: submission,
+    });
   }
-);
+)
+
 
 export const setSubmissionValidityByTxAtom = atom(
   null,
   (get, set, { transactionHash, isValid }: { transactionHash: `0x${string}`; isValid: boolean }) => {
-    const txHashMap = get(submissionsByTxHashAtom);
-    const submission = txHashMap.get(transactionHash);
+    const txHashObj = get(submissionsByTxHashAtom);
+    const submission = txHashObj[transactionHash];
     if (!submission) return;
 
     const current = get(submissionsAtom);
@@ -56,7 +70,9 @@ export const setSubmissionValidityByTxAtom = atom(
     if (!existing) return;
     updated.set(submission, {
       ...existing,
+      isPending: false,
       receipt: {
+        ...existing.receipt,
         transactionHash,
         isValid,
       },
@@ -81,13 +97,13 @@ export const resetSubmissionsAtom = atom(
   null,
   (get, set) => {
     set(submissionsAtom, new Map());
-    set(submissionsByTxHashAtom, new Map());
+    set(submissionsByTxHashAtom, {});
   }
 );
 
 export const isSubmittedAtom = atom(
   (get) => (submission: string) => get(submissionsAtom).has(submission)
-); 
+);
 
 export const submissionsSizeAtom = atom((get) => get(submissionsAtom).size);
 
