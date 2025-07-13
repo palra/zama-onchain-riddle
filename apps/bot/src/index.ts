@@ -1,8 +1,10 @@
 import 'dotenv/config';
-import { OnchainRiddle } from './contract';
 import * as bot from './bot';
 import * as contract from './contract';
+import { OnchainRiddle } from './contract';
+import { createPlayer } from './players';
 import { randomRiddle } from './riddles';
+import { PLAYERS_NUMBER } from './env';
 
 
 async function main() {
@@ -31,6 +33,12 @@ async function main() {
         )
       },
     })
+
+
+    for (let i = 0; i < PLAYERS_NUMBER; i++) {
+      const player = createPlayer(i);
+      player.loop(); // don't await, run in parallel
+    }
 
     process.on('exit', () => {
       unwatch();
