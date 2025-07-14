@@ -47,7 +47,8 @@
     "typescript": "^5.3.3"
   },
   "files": [
-    "contracts"
+    "contracts",
+    "dist"
   ],
   "keywords": [
     "blockchain",
@@ -85,11 +86,11 @@
   "dependencies": {
     "@openzeppelin/merkle-tree": "^1.0.7"
   },
-  "main": "types/index.js",
+  "main": "dist/types/index.js",
   "exports": {
     ".": {
-      "types": "./types/index.ts",
-      "default": "./types/index.js"
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/types/index.js"
     }
   }
 }
