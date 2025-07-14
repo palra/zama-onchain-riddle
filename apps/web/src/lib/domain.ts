@@ -1,12 +1,15 @@
+import { Atom } from "jotai";
+
 export type Submission = {
   submission: string;
-  isPending: boolean;
   hash: string;
+  transactionHash?: `0x${string}`;
+  isPending?: boolean;
   receipt?: {
-    transactionHash: `0x${string}`
+    transactionHash: `0x${string}`;
     isValid?: boolean;
-  }
-}
+  };
+};
 export type RiddleGameState =
   | { status: "waitingForRiddle" }
   | { status: "guess"; riddle: string }

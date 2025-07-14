@@ -1,18 +1,18 @@
 "use client";
 
 import {
-  activityFeedAtom,
-  activityFeedCollapsedAtom
+  activityFeedCollapsedAtom,
+  activityFeedEventsAtom
 } from "@/lib/atoms/activity-feed";
+import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import {
   Puzzle,
   X
 } from "lucide-react";
 import { useAccount } from "wagmi";
 import { ActivityFeedItem } from "./activity-feed-item";
-import { cn } from "@/lib/utils";
 
 interface ActivityFeedProps {
   className?: string;
@@ -20,7 +20,7 @@ interface ActivityFeedProps {
 }
 
 export function ActivityFeed({ className, variant = 'sidebar' }: ActivityFeedProps) {
-  const [events] = useAtom(activityFeedAtom);
+  const events = useAtomValue(activityFeedEventsAtom);
   const [isCollapsed, toggleCollapsed] = useAtom(activityFeedCollapsedAtom);
   const { address: currentUserAddress } = useAccount();
 

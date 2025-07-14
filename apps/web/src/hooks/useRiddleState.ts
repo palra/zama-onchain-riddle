@@ -1,17 +1,16 @@
-import { pushEventAtom } from "@/lib/atoms/activity-feed";
-import { resetSubmissionsAtom, setSubmissionValidityByTxAtom } from "@/lib/atoms/submissions";
+import { activityFeedCollapsedAtom, activityFeedReducerAtom } from "@/lib/atoms/activity-feed";
+import { submissionsAtom } from "@/lib/atoms/submissions";
 import { OnchainRiddle } from "@/lib/contracts";
 import { RiddleGameState } from "@/lib/domain";
-import { useAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useRef } from "react";
 import { isAddressEqual, zeroAddress } from "viem";
 import { useReadContracts, useWatchContractEvent } from "wagmi";
 
 export function useRiddleState() {
-  const [, resetSubmissions] = useAtom(resetSubmissionsAtom);
-  const [, setSubmissionValidityByTx] = useAtom(setSubmissionValidityByTxAtom);
-
-  const [, pushEvent] = useAtom(pushEventAtom);
+  const dispatch = useSetAtom(submissionsAtom);
+  const feedDispatch = useSetAtom(activityFeedReducerAtom);
+  const isCollapsed = useAtomValue(activityFeedCollapsedAtom);
 
   const contractState = useReadContracts({
     allowFailure: false,
@@ -60,20 +59,21 @@ export function useRiddleState() {
 
         switch (log.eventName) {
           case 'RiddleSet':
-            pushEvent({ type: 'newRiddle', riddle: log.args.riddle! });
-            resetSubmissions();
+            feedDispatch({ type: 'pushEvent', event: { type: 'newRiddle', riddle: log.args.riddle! }, isCollapsed });
+            dispatch({ type: 'reset' });
             break;
           case 'AnswerAttempt':
-            pushEvent({ type: 'guess', from: log.args.user!, isValid: log.args.correct! });
+            feedDispatch({ type: 'pushEvent', event: { type: 'guess', from: log.args.user!, isValid: log.args.correct! }, isCollapsed });
             if (typeof log.args.correct !== "undefined") {
-              setSubmissionValidityByTx({
+              dispatch({
+                type: 'setSubmissionValidityByTx',
                 transactionHash: log.transactionHash,
                 isValid: log.args.correct
-              })
+              });
             }
             break;
           case 'Winner':
-            pushEvent({ type: 'winner', winner: log.args.user! })
+            feedDispatch({ type: 'pushEvent', event: { type: 'winner', winner: log.args.user! }, isCollapsed });
             break;
         }
 

@@ -5,11 +5,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { submissionsAtom } from "@/lib/atoms/submissions";
+import { getSubmissionValidityAtom, submissionsAtom } from "@/lib/atoms/submissions";
 import { Submission } from "@/lib/domain";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { match } from "ts-pattern";
 
 interface RiddleSubmissionsProps {
@@ -21,7 +21,7 @@ export function RiddleSubmissions({
   currentSubmission,
   scrollRef,
 }: RiddleSubmissionsProps) {
-  const [submissions] = useAtom(submissionsAtom);
+  const { submissions } = useAtomValue(submissionsAtom);
 
   return (
     <div className="text-sm text-muted-foreground mt-4 text-center w-full flex flex-col gap-2">
@@ -55,9 +55,13 @@ interface SubmissionTagProps {
 }
 
 export function SubmissionTag({
-  submission: { submission, hash, isPending, receipt },
+  submission: { submission, hash, transactionHash },
   isCurrentSubmission = false,
 }: SubmissionTagProps) {
+  const [getSubmissionValidity] = useAtom(getSubmissionValidityAtom);
+  const isValid = getSubmissionValidity(submission);
+  const isPending = typeof isValid === "undefined";
+
   return (
     <motion.span
       initial={{ opacity: 0, y: 10 }}
@@ -67,16 +71,14 @@ export function SubmissionTag({
       className={cn(
         "inline-block mr-2 last:mr-0 my-0.5 px-2 py-1 bg-slate-400 text-slate-900 rounded-full whitespace-pre-wrap",
         isPending && "animate-pulse",
-        receipt?.isValid === true && "bg-green-400 text-white",
-        receipt?.isValid === false && "bg-slate-200",
+        isValid === true && "bg-green-400 text-white",
+        isValid === false && "bg-slate-200",
         isCurrentSubmission && !isPending && "bg-red-400 text-white",
       )}
     >
       <Tooltip>
         <TooltipTrigger>
-          <span className={cn(receipt?.isValid === false && "line-through")}>
-            {submission}
-          </span>
+          <span className={cn(isValid === false && "line-through")}>{submission}</span>
         </TooltipTrigger>
         <TooltipContent>
           <table className="text-xs border-separate border-spacing-0">
@@ -85,10 +87,10 @@ export function SubmissionTag({
                 <td className="font-semibold pr-2 text-right border-r border-slate-200">Text hash</td>
                 <td className="break-all font-mono pl-2">{hash}</td>
               </tr>
-              {receipt?.transactionHash && (
+              {transactionHash && (
                 <tr className="border-b border-slate-200 last:border-b-0">
                   <td className="font-semibold pr-2 text-right border-r border-slate-200">Tx</td>
-                  <td className="break-all font-mono pl-2">{receipt.transactionHash}</td>
+                  <td className="break-all font-mono pl-2">{transactionHash}</td>
                 </tr>
               )}
             </tbody>

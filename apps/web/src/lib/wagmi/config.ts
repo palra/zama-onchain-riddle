@@ -1,5 +1,5 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
-import { http } from 'wagmi'
+import { fallback, http, webSocket } from 'wagmi'
 import { hardhat } from 'wagmi/chains'
 
 export const config = getDefaultConfig({
@@ -7,7 +7,10 @@ export const config = getDefaultConfig({
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'default',
   chains: [hardhat],
   transports: {
-    [hardhat.id]: http(),
+    [hardhat.id]: fallback([
+      webSocket('ws://127.0.0.1:8545'),
+      http(),
+    ]),
   },
 })
 

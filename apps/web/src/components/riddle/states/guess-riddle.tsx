@@ -113,10 +113,10 @@ export function GuessRiddle({ riddle }: GuessRiddleProps) {
       </form.Field>
 
       <form.Subscribe
-        selector={(state) => state.values.answer.trim()}
-        children={(currentSubmission) => (
+        selector={(state) => [state.values.answer.trim(), state.isSubmitting] as const}
+        children={([currentSubmission, isSubmitting]) => (
           <RiddleSubmissions
-            currentSubmission={currentSubmission}
+            currentSubmission={isSubmitting ? undefined : currentSubmission}
             scrollRef={scrollRef}
           />
         )}
