@@ -12,6 +12,7 @@ import { useAtom } from "jotai";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
 import { ActivityFeed } from "./activity-feed";
 import { GreenPulse } from "./green-pulse";
+import { EventNumberPill } from "./event-number-pill";
 
 export function MobileActivityDrawer() {
     const [eventsNum] = useAtom(unseenEventsAtom);
@@ -27,11 +28,7 @@ export function MobileActivityDrawer() {
           <GreenPulse />
           Live Activity
           {isCollapsed ? <ChevronDown /> : <ChevronUp />}
-          {eventsNum > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
-              {eventsNum > 9 ? "9+" : eventsNum}
-            </span>
-          )}
+          <EventNumberPill eventsNum={eventsNum} position="top-right" />
         </Button>
       </DrawerTrigger>
       <DrawerContent className="h-[80vh]">

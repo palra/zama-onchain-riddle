@@ -7,6 +7,7 @@ import { useAtom } from "jotai";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { GreenPulse } from "./green-pulse";
 import { cn } from "@/lib/utils";
+import { EventNumberPill } from "./event-number-pill";
 
 export function DesktopButton() {
   const [eventsNum] = useAtom(unseenEventsAtom);
@@ -31,11 +32,7 @@ export function DesktopButton() {
         Live Activity
       </span>
       {isCollapsed ? <ChevronLeft /> : <ChevronRight />}
-      {eventsNum > 0 && (
-        <span className="absolute -top-2 -left-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
-          {eventsNum > 9 ? "9+" : eventsNum}
-        </span>
-      )}
+      <EventNumberPill eventsNum={eventsNum} position="top-left" />
     </Button>
   );
 }

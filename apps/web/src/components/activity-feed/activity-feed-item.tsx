@@ -4,6 +4,7 @@ import { ActivityFeedEvent } from "@/lib/domain";
 import { motion } from "framer-motion";
 import { Puzzle, CheckCircle, XCircle, Trophy, User, Clock } from "lucide-react";
 import { Address } from "../ui/address";
+import { cn } from "@/lib/utils";
 
 function EventIcon({ event }: { event: ActivityFeedEvent }) {
   switch (event.type) {
@@ -75,24 +76,38 @@ function EventMessage({
   }
 }
 
+import React from "react";
+
 export function ActivityFeedItem({
   event,
   index,
   currentUserAddress,
+  className,
+  style,
+  ref: forwardedRef,
 }: {
   event: ActivityFeedEventItem;
   index: number;
   currentUserAddress?: `0x${string}`;
+  className?: string;
+  style?: React.CSSProperties;
+  ref?: React.Ref<HTMLDivElement>;
 }) {
   const timeAgo = useTimeAgo(event.at);
 
   return (
     <motion.div
+      ref={forwardedRef}
+      data-index={index}
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
-      className="flex items-start gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow"
+      transition={{ duration: 0.3 }}
+      className={cn(
+        "flex items-start gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow",
+        className
+      )}
+      style={style}
     >
       <div className="flex-shrink-0 mt-0.5">
         <EventIcon event={event} />

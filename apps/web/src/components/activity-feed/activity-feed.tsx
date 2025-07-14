@@ -2,29 +2,43 @@
 
 import {
   activityFeedCollapsedAtom,
-  activityFeedEventsAtom
+  activityFeedEventsAtom,
 } from "@/lib/atoms/activity-feed";
 import { cn } from "@/lib/utils";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAtom, useAtomValue } from "jotai";
-import {
-  Puzzle,
-  X
-} from "lucide-react";
+import { Puzzle, X } from "lucide-react";
+import { useRef } from "react";
 import { useAccount } from "wagmi";
 import { ActivityFeedItem } from "./activity-feed-item";
 
 interface ActivityFeedProps {
   className?: string;
-  variant?: 'sidebar' | 'overlay';
+  variant?: "sidebar" | "overlay";
 }
 
-export function ActivityFeed({ className, variant = 'sidebar' }: ActivityFeedProps) {
+export function ActivityFeed({
+  className,
+  variant = "sidebar",
+}: ActivityFeedProps) {
   const events = useAtomValue(activityFeedEventsAtom);
   const [isCollapsed, toggleCollapsed] = useAtom(activityFeedCollapsedAtom);
   const { address: currentUserAddress } = useAccount();
 
-  const isOverlay = variant === 'overlay';
+  const isOverlay = variant === "overlay";
+
+  // Virtualization setup
+  const parentRef = useRef<HTMLDivElement>(null);
+  const rowVirtualizer = useVirtualizer({
+    count: events.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 90,
+    overscan: 20,
+    getItemKey: (index) => events[index].id,
+  });
+
+  const items = rowVirtualizer.getVirtualItems();
 
   return (
     <div className={cn("h-full flex", className)}>
@@ -40,7 +54,7 @@ export function ActivityFeed({ className, variant = 'sidebar' }: ActivityFeedPro
               "bg-gray-50 dark:bg-gray-900 flex flex-col overflow-hidden",
               isOverlay
                 ? "w-full h-full rounded-lg shadow-xl"
-                : "w-80 border-l border-gray-200 dark:border-gray-700"
+                : "w-80 border-l border-gray-200 dark:border-gray-700",
             )}
           >
             {/* Header - only show for sidebar variant */}
@@ -65,8 +79,13 @@ export function ActivityFeed({ className, variant = 'sidebar' }: ActivityFeedPro
               </div>
             )}
 
-            <div className="flex-1 p-4 space-y-3 overflow-y-auto">
-              <AnimatePresence mode="popLayout">
+            <div
+              ref={parentRef}
+              className="flex-1 p-4 overflow-y-auto relative w-full"
+              style={{
+                height: rowVirtualizer.getTotalSize(),
+              }}
+            >
                 {events.length === 0 ? (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -80,16 +99,27 @@ export function ActivityFeed({ className, variant = 'sidebar' }: ActivityFeedPro
                     </p>
                   </motion.div>
                 ) : (
-                  events.map((event, index) => (
-                    <ActivityFeedItem
-                      key={event.id}
-                      event={event}
-                      index={index}
-                      currentUserAddress={currentUserAddress}
-                    />
-                  ))
+                  <div
+                    className="absolute top-0 left-0 w-full"
+                    style={{
+                      transform: `translateY(${items[0]?.start ?? 0}px)`
+                    }}
+                  >
+                    {items.map((virtualRow) => {
+                      const event = events[virtualRow.index];
+                      return (
+                        <ActivityFeedItem
+                          key={virtualRow.key}
+                          index={virtualRow.index}
+                          ref={rowVirtualizer.measureElement}
+                          event={event}
+                          currentUserAddress={currentUserAddress}
+                          className="my-3 last:mb-0 mx-3"
+                        />
+                      );
+                    })}
+                  </div>
                 )}
-              </AnimatePresence>
             </div>
           </motion.div>
         )}

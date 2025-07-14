@@ -52,7 +52,7 @@ export function createPlayer(playerIndex: number) {
     console.log(`▶️ Player #${playerIndex + 1} - Starting`);
 
     while (true) {
-      await setTimeout(Math.random() * 9000 + 1000)
+      await setTimeout(Math.random() * 1000 + 1000)
       await submitNewAnswer();
     }
   }

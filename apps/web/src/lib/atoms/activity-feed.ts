@@ -47,3 +47,6 @@ export const activityFeedReducerAtom = atomWithReducer(initialActivityFeedState,
 // --- Selectors ---
 export const activityFeedEventsAtom = atom((get) => (get(activityFeedReducerAtom) as ActivityFeedState).events);
 export const unseenEventsAtom = atom((get) => (get(activityFeedReducerAtom) as ActivityFeedState).unseen);
+
+
+// TODO: add global side efect with jotai-effect to reset unseen when activityFeedCollapsedAtom is set to false
