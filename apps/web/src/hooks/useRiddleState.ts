@@ -1,8 +1,8 @@
-import { activityFeedCollapsedAtom, activityFeedReducerAtom } from "@/lib/atoms/activity-feed";
+import { activityFeedReducerAtom } from "@/lib/atoms/activity-feed";
 import { submissionsAtom } from "@/lib/atoms/submissions";
 import { OnchainRiddle } from "@/lib/contracts";
 import { RiddleGameState } from "@/lib/domain";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { useRef } from "react";
 import { isAddressEqual, zeroAddress } from "viem";
 import { useReadContracts, useWatchContractEvent } from "wagmi";
@@ -10,7 +10,6 @@ import { useReadContracts, useWatchContractEvent } from "wagmi";
 export function useRiddleState() {
   const dispatch = useSetAtom(submissionsAtom);
   const feedDispatch = useSetAtom(activityFeedReducerAtom);
-  const isCollapsed = useAtomValue(activityFeedCollapsedAtom);
 
   const contractState = useReadContracts({
     allowFailure: false,
@@ -59,11 +58,11 @@ export function useRiddleState() {
 
         switch (log.eventName) {
           case 'RiddleSet':
-            feedDispatch({ type: 'pushEvent', event: { type: 'newRiddle', riddle: log.args.riddle! }, isCollapsed });
+            feedDispatch({ type: 'pushEvent', event: { type: 'newRiddle', riddle: log.args.riddle! } });
             dispatch({ type: 'reset' });
             break;
           case 'AnswerAttempt':
-            feedDispatch({ type: 'pushEvent', event: { type: 'guess', from: log.args.user!, isValid: log.args.correct! }, isCollapsed });
+            feedDispatch({ type: 'pushEvent', event: { type: 'guess', from: log.args.user!, isValid: log.args.correct! } });
             if (typeof log.args.correct !== "undefined") {
               dispatch({
                 type: 'setSubmissionValidityByTx',
@@ -73,7 +72,7 @@ export function useRiddleState() {
             }
             break;
           case 'Winner':
-            feedDispatch({ type: 'pushEvent', event: { type: 'winner', winner: log.args.user! }, isCollapsed });
+            feedDispatch({ type: 'pushEvent', event: { type: 'winner', winner: log.args.user! } });
             break;
         }
 
