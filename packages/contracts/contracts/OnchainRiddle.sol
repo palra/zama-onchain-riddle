@@ -9,8 +9,8 @@ contract OnchainRiddle {
     bool public isActive;
 
     event RiddleSet(string riddle);
-    event AnswerAttempt(address indexed user, bool correct);
-    event Winner(address indexed user);
+    event AnswerAttempt(address indexed user, string answer, bool correct);
+    event Winner(address indexed user, string answer);
 
     modifier onlyBot() {
         require(msg.sender == bot, "Only bot can call this function");
@@ -37,9 +37,9 @@ contract OnchainRiddle {
         if (keccak256(abi.encodePacked(_answer)) == answerHash) {
             winner = msg.sender;
             isActive = false;
-            emit Winner(msg.sender);
+            emit Winner(msg.sender, _answer);
         }
 
-        emit AnswerAttempt(msg.sender, winner == msg.sender);
+        emit AnswerAttempt(msg.sender, _answer, winner == msg.sender);
     }
 }

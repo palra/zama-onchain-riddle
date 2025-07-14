@@ -1,9 +1,7 @@
-import { Atom } from "jotai";
 
 export type Submission = {
   submission: string;
   hash: string;
-  transactionHash?: `0x${string}`;
   isPending?: boolean;
   receipt?: {
     transactionHash: `0x${string}`;
@@ -20,11 +18,13 @@ export type ActivityFeedEvent =
   ({
     type: 'guess',
     from: `0x${string}`,
+    submission: string,
     isValid: boolean
   } | {
     type: 'newRiddle',
     riddle: string,
   } | {
     type: 'winner',
-    winner: `0x${string}`
+    winner: `0x${string}`,
+    answer: string,
   });

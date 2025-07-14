@@ -51,7 +51,7 @@ export function useRiddleState() {
         const logTag = `${log.transactionHash}-${log.logIndex}`;
         if (idempotencySet.current.has(logTag)) continue;
 
-        console.info("OnchainRiddle new contract log", log);
+        console.debug("OnchainRiddle new contract log", log);
 
         // For now, handling game state with the same handler used for initial fetching.
         contractState.refetch();
@@ -62,17 +62,24 @@ export function useRiddleState() {
             dispatch({ type: 'reset' });
             break;
           case 'AnswerAttempt':
-            feedDispatch({ type: 'pushEvent', event: { type: 'guess', from: log.args.user!, isValid: log.args.correct! } });
-            if (typeof log.args.correct !== "undefined") {
-              dispatch({
-                type: 'setSubmissionValidityByTx',
-                transactionHash: log.transactionHash,
-                isValid: log.args.correct
-              });
-            }
+            feedDispatch({
+              type: 'pushEvent',
+              event: {
+                type: 'guess',
+                from: log.args.user!,
+                isValid: log.args.correct!,
+                submission: log.args.answer!
+              }
+            });
+            dispatch({
+              type: 'setSubmissionValidityFromTx',
+              transactionHash: log.transactionHash,
+              isValid: log.args.correct!,
+              submission: log.args.answer!,
+            });
             break;
           case 'Winner':
-            feedDispatch({ type: 'pushEvent', event: { type: 'winner', winner: log.args.user! } });
+            feedDispatch({ type: 'pushEvent', event: { type: 'winner', winner: log.args.user!, answer: log.args.answer! } });
             break;
         }
 

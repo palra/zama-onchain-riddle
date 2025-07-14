@@ -57,7 +57,8 @@ function EventMessage({
               attempted
             </span>
           )}{" "}
-          the riddle
+          the riddle with
+          <span className="inline-block mr-2 px-2 py-1 bg-muted text-foreground rounded-full whitespace-pre-wrap">{event.submission}</span>
         </span>
       );
     case "winner":

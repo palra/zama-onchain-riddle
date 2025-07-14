@@ -1,9 +1,9 @@
+import { Submission } from '@/lib/domain';
+import { produce } from 'immer';
 import { atom } from 'jotai';
 import { atomWithReducer } from 'jotai/utils';
-import { produce } from 'immer';
-import { encodePacked, keccak256 } from 'viem';
-import { Submission } from '@/lib/domain';
 import { match } from 'ts-pattern';
+import { encodePacked, keccak256 } from 'viem';
 
 // --- Types ---
 type SubmissionMap = Map<string, Submission>;
@@ -12,49 +12,57 @@ type TxDataMap = Map<`0x${string}`, { submission?: string; isValid?: boolean }>;
 type State = {
   submissions: SubmissionMap;
   txData: TxDataMap;
+  winningSubmission?: string;
 };
 
 type Action =
   | { type: 'addSubmission'; submission: string }
   | { type: 'setSubmissionTxHash'; submission: string; transactionHash: `0x${string}` }
-  | { type: 'setSubmissionValidityByTx'; transactionHash: `0x${string}`; isValid: boolean }
+  | { type: 'setSubmissionValidityFromTx'; transactionHash: `0x${string}`; isValid: boolean; submission: string }
   | { type: 'removeSubmission'; submission: string }
   | { type: 'reset' };
+
+function newSubmission(submission: string): Submission {
+  return {
+    submission,
+    isPending: true,
+    hash: keccak256(encodePacked(['string'], [submission])),
+  }
+}
 
 
 const reducer = produce((draft: State, action: Action) => {
   match(action)
     .with({ type: 'addSubmission' }, ({ submission }) => {
       if (draft.submissions.has(submission)) return;
-      draft.submissions.set(submission, {
-        submission,
-        isPending: true,
-        hash: keccak256(encodePacked(['string'], [submission])),
-      });
+      draft.submissions.set(submission, newSubmission(submission));
     })
     .with({ type: 'setSubmissionTxHash' }, ({ submission, transactionHash }) => {
       const sub = draft.submissions.get(submission);
       if (sub) {
-        sub.transactionHash = transactionHash;
+        sub.receipt = {
+          ...(sub.receipt ?? {}),
+          transactionHash,
+        };
+      }
+    })
+    .with({ type: 'setSubmissionValidityFromTx' }, ({ transactionHash, isValid, submission }) => {
+      if (!draft.submissions.has(submission)) {
+        draft.submissions.set(submission, newSubmission(submission));
       }
 
-      const tx = draft.txData.get(transactionHash) || {};
-      draft.txData.set(transactionHash, { ...tx, submission });
-    })
-    .with({ type: 'setSubmissionValidityByTx' }, ({ transactionHash, isValid }) => {
-      const txData = draft.txData.get(transactionHash) || {};
-      draft.txData.set(transactionHash, { ...txData, isValid });
+      const sub = draft.submissions.get(submission)!;
 
-      if (!txData.submission) return;
-
-      const sub = draft.submissions.get(txData.submission);
-      if (!sub) return;
-
+      sub.submission = submission;
       sub.isPending = false;
       sub.receipt = {
         transactionHash,
         isValid,
       };
+
+      if (isValid) {
+        draft.winningSubmission = submission;
+      }
     })
     .with({ type: 'removeSubmission' }, ({ submission }) => {
       draft.submissions.delete(submission);
@@ -62,6 +70,7 @@ const reducer = produce((draft: State, action: Action) => {
     .with({ type: 'reset' }, () => {
       draft.submissions = new Map();
       draft.txData = new Map();
+      draft.winningSubmission = undefined;
     })
     .exhaustive();
 });
@@ -70,25 +79,16 @@ const reducer = produce((draft: State, action: Action) => {
 const initialState: State = {
   submissions: new Map(),
   txData: new Map(),
+  winningSubmission: undefined
 };
 
 export const submissionsAtom = atomWithReducer(initialState, reducer);
+export const winningSubmissionAtom = atom((get) => get(submissionsAtom).winningSubmission);
 
 // --- Selectors ---
 export const getSubmissionValidityAtom = atom(
-  (get) => (submission: string) => {
-    const { submissions, txData } = get(submissionsAtom) as State;
-    const sub = submissions.get(submission);
-    if (!sub || !sub.transactionHash) return undefined;
-    return txData.get(sub.transactionHash)?.isValid;
-  }
-);
-
-export const getValidityByTxAtom = atom(
-  (get) => (transactionHash: `0x${string}`) => {
-    const { txData } = get(submissionsAtom) as State;
-    return txData.get(transactionHash)?.isValid;
-  }
+  (get) => (submission: string) =>
+    get(submissionsAtom).submissions.get(submission)?.receipt?.isValid
 );
 
 export const isSubmittedAtom = atom(

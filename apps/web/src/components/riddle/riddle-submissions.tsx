@@ -55,7 +55,7 @@ interface SubmissionTagProps {
 }
 
 export function SubmissionTag({
-  submission: { submission, hash, transactionHash },
+  submission: { submission, hash, receipt },
   isCurrentSubmission = false,
 }: SubmissionTagProps) {
   const [getSubmissionValidity] = useAtom(getSubmissionValidityAtom);
@@ -87,10 +87,10 @@ export function SubmissionTag({
                 <td className="font-semibold pr-2 text-right border-r border-slate-200">Text hash</td>
                 <td className="break-all font-mono pl-2">{hash}</td>
               </tr>
-              {transactionHash && (
+              {receipt?.transactionHash && (
                 <tr className="border-b border-slate-200 last:border-b-0">
                   <td className="font-semibold pr-2 text-right border-r border-slate-200">Tx</td>
-                  <td className="break-all font-mono pl-2">{transactionHash}</td>
+                  <td className="break-all font-mono pl-2">{receipt.transactionHash}</td>
                 </tr>
               )}
             </tbody>
