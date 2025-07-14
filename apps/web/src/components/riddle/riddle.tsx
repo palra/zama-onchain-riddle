@@ -22,7 +22,7 @@ export function Riddle() {
     .with({ isLoading: true }, () => <GuessRiddleLoading />)
     .otherwise(() => (
       <div className="flex flex-col items-center gap-6 w-full max-w-md">
-        <div className="text-center text-red-500 font-semibold text-lg">
+        <div className="text-center text-destructive font-semibold text-lg">
           An error occurred while loading the riddle. <br/>
           Please try again later.
         </div>

@@ -18,14 +18,14 @@ export function NetworkGuard() {
   // Show loading state while switching networks
   if (isPending) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
         <div className="text-center space-y-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-foreground">
             Zama On-chain Riddle
           </h1>
           <div className="flex flex-col items-center space-y-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-border"></div>
+            <p className="text-lg text-muted-foreground">
               Switching to {targetChain.name}...
             </p>
           </div>
@@ -37,19 +37,19 @@ export function NetworkGuard() {
   // Show network mismatch screen
   if (chain && !isOnCorrectNetwork) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
         <div className="text-center space-y-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-foreground">
             Zama On-chain Riddle
           </h1>
           <div className="space-y-4">
-            <p className="text-lg text-gray-600 dark:text-gray-300">
+            <p className="text-lg text-muted-foreground">
               Wrong network detected
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-muted-foreground">
               You&apos;re connected to {chain.name}, but this app requires {targetChain.name}
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-muted-foreground">
               Switching automatically...
             </p>
           </div>
@@ -59,4 +59,4 @@ export function NetworkGuard() {
   }
 
   return null;
-} 
+}

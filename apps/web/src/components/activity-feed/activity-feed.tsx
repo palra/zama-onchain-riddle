@@ -51,7 +51,7 @@ export function ActivityFeed({
             exit={isOverlay ? { opacity: 0 } : { width: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className={cn(
-              "bg-gray-50 dark:bg-gray-900 flex flex-col overflow-hidden",
+              "bg-gray-50 dark:bg-gray-950 flex flex-col overflow-hidden",
               isOverlay
                 ? "w-full h-full rounded-lg shadow-xl"
                 : "w-80 border-l border-gray-200 dark:border-gray-700",

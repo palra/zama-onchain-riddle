@@ -69,11 +69,11 @@ export function SubmissionTag({
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.2, delay: 0.125 }}
       className={cn(
-        "inline-block mr-2 last:mr-0 my-0.5 px-2 py-1 bg-slate-400 text-slate-900 rounded-full whitespace-pre-wrap",
+        "inline-block mr-2 last:mr-0 my-0.5 px-2 py-1 bg-muted text-foreground rounded-full whitespace-pre-wrap",
         isPending && "animate-pulse",
-        isValid === true && "bg-green-400 text-white",
-        isValid === false && "bg-slate-200",
-        isCurrentSubmission && !isPending && "bg-red-400 text-white",
+        isValid === true && "bg-green-400 text-white dark:bg-green-700 dark:text-green-100",
+        isValid === false && "bg-muted text-muted-foreground",
+        isCurrentSubmission && !isPending && "bg-destructive text-white dark:text-red-50",
       )}
     >
       <Tooltip>

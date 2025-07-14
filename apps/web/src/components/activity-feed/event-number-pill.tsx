@@ -27,7 +27,7 @@ export function EventNumberPill({
     <span
       className={cn(
         positionClass,
-        "bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium",
+        "bg-destructive text-destructive-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium",
         className
       )}
     >

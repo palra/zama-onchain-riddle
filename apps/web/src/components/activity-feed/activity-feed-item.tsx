@@ -104,7 +104,7 @@ export function ActivityFeedItem({
       exit={{ opacity: 0, x: 20 }}
       transition={{ duration: 0.3 }}
       className={cn(
-        "flex items-start gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow",
+        "flex items-start gap-3 p-3 bg-card rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow",
         className
       )}
       style={style}
@@ -113,10 +113,10 @@ export function ActivityFeedItem({
         <EventIcon event={event} />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="text-sm text-gray-900 dark:text-gray-100">
+        <div className="text-sm text-foreground">
           <EventMessage event={event} currentUserAddress={currentUserAddress} />
         </div>
-        <div className="flex items-center gap-1 mt-1 text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
           <Clock className="w-3 h-3" />
           <span>{timeAgo}</span>
         </div>

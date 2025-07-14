@@ -99,7 +99,7 @@ export function GuessRiddle({ riddle }: GuessRiddleProps) {
               />
             </div>
             {field.state.meta.errors.length > 0 ? (
-              <div className="text-red-500 text-xs mt-1 text-center w-full">
+              <div className="text-destructive text-xs mt-1 text-center w-full">
                 {field.state.meta.errors
                   .map((err: { message?: string } | undefined) => err?.message)
                   .filter(Boolean)

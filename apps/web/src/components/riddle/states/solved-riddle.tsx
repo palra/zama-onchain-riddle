@@ -22,10 +22,10 @@ export function SolvedRiddle({ riddle, winner }: SolvedRiddleProps) {
         <h1 className={cn("text-xl md:text-2xl font-semibold text-center mb-4")}>
           {riddle}
         </h1>
-        
-        <div className="bg-green-100 border border-green-300 rounded-lg p-4 mb-4">
-          <div className="text-green-800 font-medium mb-2">🎉 Riddle Solved!</div>
-          <div className="text-sm text-green-700">
+
+        <div className="bg-green-100 border border-green-300 dark:bg-green-900 dark:border-green-700 rounded-lg p-4 mb-4">
+          <div className="text-green-800 dark:text-green-200 font-medium mb-2">🎉 Riddle Solved!</div>
+          <div className="text-sm text-green-700 dark:text-green-100">
             <div>
               {match(winner)
                 .with(address!, () => <strong>You are the winner!</strong>)
@@ -37,4 +37,4 @@ export function SolvedRiddle({ riddle, winner }: SolvedRiddleProps) {
       </motion.div>
     </div>
   );
-} 
+}

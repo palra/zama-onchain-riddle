@@ -38,7 +38,7 @@ export function MobileActivityDrawer() {
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               Live Activity
               {eventsNum > 0 && (
-                <span className="ml-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded-full">
+                <span className="ml-2 bg-muted text-foreground text-xs px-2 py-1 rounded-full">
                   {eventsNum} event{eventsNum !== 1 ? "s" : ""}
                 </span>
               )}
