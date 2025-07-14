@@ -29,7 +29,7 @@ export function SolvedRiddle({ riddle, winner }: SolvedRiddleProps) {
             <div>
               {match(winner)
                 .with(address!, () => <strong>You are the winner!</strong>)
-                .otherwise(() => <><strong>Winner:</strong> {winner}</>)
+                .otherwise(() => <><strong>Winner:</strong> <span className="font-mono">{winner}</span></>)
               }
               </div>
           </div>
