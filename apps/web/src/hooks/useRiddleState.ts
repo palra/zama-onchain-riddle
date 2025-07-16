@@ -1,5 +1,5 @@
-import { activityFeedReducerAtom } from "@/lib/atoms/activity-feed";
-import { submissionsAtom } from "@/lib/atoms/submissions";
+import { resetSubmissionsAtom, setSubmissionValidityFromTxAtom } from "@/lib/atoms/submissions";
+import { pushEventAtom } from "@/lib/atoms/activity-feed";
 import { OnchainRiddle } from "@/lib/contracts";
 import { RiddleGameState } from "@/lib/domain";
 import { useSetAtom } from "jotai";
@@ -8,8 +8,9 @@ import { isAddressEqual, zeroAddress } from "viem";
 import { useReadContracts, useWatchContractEvent } from "wagmi";
 
 export function useRiddleState() {
-  const dispatch = useSetAtom(submissionsAtom);
-  const feedDispatch = useSetAtom(activityFeedReducerAtom);
+  const resetSubmissions = useSetAtom(resetSubmissionsAtom);
+  const setSubmissionValidityFromTx = useSetAtom(setSubmissionValidityFromTxAtom);
+  const pushEvent = useSetAtom(pushEventAtom);
 
   const contractState = useReadContracts({
     allowFailure: false,
@@ -58,28 +59,24 @@ export function useRiddleState() {
 
         switch (log.eventName) {
           case 'RiddleSet':
-            feedDispatch({ type: 'pushEvent', event: { type: 'newRiddle', riddle: log.args.riddle! } });
-            dispatch({ type: 'reset' });
+            pushEvent({ type: 'newRiddle', riddle: log.args.riddle! });
+            resetSubmissions();
             break;
           case 'AnswerAttempt':
-            feedDispatch({
-              type: 'pushEvent',
-              event: {
-                type: 'guess',
-                from: log.args.user!,
-                isValid: log.args.correct!,
-                submission: log.args.answer!
-              }
+            pushEvent({
+              type: 'guess',
+              from: log.args.user!,
+              isValid: log.args.correct!,
+              submission: log.args.answer!
             });
-            dispatch({
-              type: 'setSubmissionValidityFromTx',
+            setSubmissionValidityFromTx({
               transactionHash: log.transactionHash,
               isValid: log.args.correct!,
               submission: log.args.answer!,
             });
             break;
           case 'Winner':
-            feedDispatch({ type: 'pushEvent', event: { type: 'winner', winner: log.args.user!, answer: log.args.answer! } });
+            pushEvent({ type: 'winner', winner: log.args.user!, answer: log.args.answer! });
             break;
         }
 

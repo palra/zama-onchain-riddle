@@ -5,11 +5,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getSubmissionValidityAtom, submissionsAtom } from "@/lib/atoms/submissions";
+import { submissionsAtom } from "@/lib/atoms/submissions";
 import { Submission } from "@/lib/domain";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import { match } from "ts-pattern";
 
 interface RiddleSubmissionsProps {
@@ -21,7 +21,7 @@ export function RiddleSubmissions({
   currentSubmission,
   scrollRef,
 }: RiddleSubmissionsProps) {
-  const { submissions } = useAtomValue(submissionsAtom);
+  const submissions = useAtomValue(submissionsAtom);
 
   return (
     <div className="text-sm text-muted-foreground mt-4 text-center w-full flex flex-col gap-2">
@@ -58,8 +58,7 @@ export function SubmissionTag({
   submission: { submission, hash, receipt },
   isCurrentSubmission = false,
 }: SubmissionTagProps) {
-  const [getSubmissionValidity] = useAtom(getSubmissionValidityAtom);
-  const isValid = getSubmissionValidity(submission);
+  const isValid = receipt?.isValid;
   const isPending = typeof isValid === "undefined";
 
   return (
