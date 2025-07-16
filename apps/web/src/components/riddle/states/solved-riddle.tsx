@@ -1,3 +1,4 @@
+import { Address } from "@/components/ui/address";
 import { winningSubmissionAtom } from "@/lib/atoms/submissions";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -7,7 +8,7 @@ import { useAccount } from "wagmi";
 
 interface SolvedRiddleProps {
   riddle: string;
-  winner: string;
+  winner: `0x${string}`;
 }
 
 export function SolvedRiddle({ riddle, winner }: SolvedRiddleProps) {
@@ -45,7 +46,7 @@ export function SolvedRiddle({ riddle, winner }: SolvedRiddleProps) {
                 .otherwise(() => (
                   <>
                     <strong>Winner:</strong>{" "}
-                    <span className="font-mono">{winner}</span>
+                    <Address address={winner} className="font-mono" />
                   </>
                 ))}
             </div>
