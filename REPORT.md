@@ -24,9 +24,10 @@ I chose Next.js and Wagmi for the front-end:
 Supporting libraries:
 
 - **Jotai**: Minimal, flexible state management for React. Used with **jotai-effect** for state-level side effects.
-- **Immer**: Simplifies immutable state updates, especially useful for actions (write only actions).
+- **Immer**: Simplifies immutable state updates, especially useful for actions (write-only Jotai atoms).
 - **ts-pattern** (+ PattyCake): Type-safe, expressive pattern matching with zero runtime overhead.
-- **Tailwind CSS v4** and **Shadcn**: Utility-first styling and prebuilt components for a modern UI. **Framer Motion** for animations.
+- **Tailwind CSS v4** and **Shadcn**: Utility-first styling and prebuilt components for a modern UI.
+- **Framer Motion** for animations.
 - **TanStack Query**: (via Wagmi) Efficient async data fetching and state management.
 - **TanStack Form**: Manages the guess riddle form with declarative validation and state.
 - **TanStack Virtual**: Virtualizes the activity feed for performance with large event lists.
